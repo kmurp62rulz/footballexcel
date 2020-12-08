@@ -1,9 +1,11 @@
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font
+from openpyxl.formula.translate import Translator
 
 wb = load_workbook('test.xlsx')
 main = wb['main']
-max = len(main['A']) + 1
+maxrow = len(main['A']) + 1
+
 
 season = input('What season are you in? \n')
 
@@ -16,17 +18,24 @@ else:
     if input('No matches found, create new sheet? (y/n) \n') == 'y':
         ws = wb.create_sheet(season)
         
-        for name in range(1, max):
+        for name in range(1, maxrow):
             ws.cell(row=name,column=1).value = main.cell(row=name,column=1).value
         names = ws.cell(row=1, column=1)
         names.font = Font(bold=True)
         names.value = 'Names'
+        total = ws.cell(row=1, column=2)
+        total.font = Font(bold=True)
+        total.value = 'Total'
         print('New season: ' + str(season) + ' created successfully!')
     else:
         print('ok')
 
-nextcol = ws.max_column + 1
-for name in range(2, max):
+maxcol = ws.max_column
+nextcol = maxcol + 1
+
+
+
+for name in range(2, maxrow):
     #ask user how many goals they scored this week
     goals = input('How many goals did ' + str(ws.cell(row=name,column=1).value) + ' score this week? \n')
     #create new cell at len(ws)+1
@@ -35,18 +44,20 @@ for name in range(2, max):
     newcell.value = int(goals)
     week = ws.cell(row=1, column=nextcol)
     week.font = Font(bold=True)
-    week.value = 'Week ' + str(nextcol - 1)
+    week.value = 'Week ' + str(nextcol - 2)
 
+for name in range(2, maxrow):
+    newcell = ws.cell(row=name, column=2)
+    newcell.font = Font(bold=False)
+    newcell.value = "=SUM(C" + str(name) + ":ZZ" + str(name) + ")"
 
-#for week in range(1, ws.max_column):
-#    print(week)
-#    #make titles with week + len(ws)
-#    nextnamecol = 2
-#    titlecell = ws.cell(row=1, column=nextnamecol)
-#    titlecell.font = Font(bold=True)
-#    titlecell.value = 'Week ' + str(nextnamecol - 1)
-#    nextnamecol += 1
-
+nextcolmain = main.max_column + 1
+for sheet in wb:
+    if sheet.title != 'main':
+        print(sheet.title)
+        season = main.cell(row=1, column=nextcolmain)
+        season.font = Font(bold=True)
+        season.value = sheet.title
 
 wb.save('test.xlsx')
     

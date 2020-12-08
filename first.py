@@ -8,6 +8,10 @@ names = main.cell(row=1, column=1)
 names.font = Font(bold=True)
 names.value = 'Names'
 
+total = main.cell(row=1, column=2)
+total.font = Font(bold=True)
+total.value = 'Total'
+
 numberOfPlayers = int(input('How many players on the team? \n'))
 x = 2
 while numberOfPlayers > 0:
