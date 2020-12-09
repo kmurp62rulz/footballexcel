@@ -34,7 +34,6 @@ maxcol = ws.max_column
 nextcol = maxcol + 1
 
 
-
 for name in range(2, maxrow):
     #ask user how many goals they scored this week
     goals = input('How many goals did ' + str(ws.cell(row=name,column=1).value) + ' score this week? \n')
@@ -51,13 +50,28 @@ for name in range(2, maxrow):
     newcell.font = Font(bold=False)
     newcell.value = "=SUM(C" + str(name) + ":ZZ" + str(name) + ")"
 
+
 nextcolmain = main.max_column + 1
 for sheet in wb:
     if sheet.title != 'main':
-        print(sheet.title)
+        
         season = main.cell(row=1, column=nextcolmain)
         season.font = Font(bold=True)
         season.value = sheet.title
+
+
+for name in range(2, maxrow):
+    sumtotal = "=SUM("
+    for sheet in wb:
+        if sheet.title != 'main':
+            sumtotal += "+" + str(sheet.title) + "!" + "B" + str(name)
+    sumtotal = sumtotal[0:5] + sumtotal[6:]
+    sumtotal += ")"
+    print(sumtotal)
+    newcell = main.cell(row=name, column=2)
+    newcell.font = Font(bold=False)
+    newcell.value = sumtotal
+
 
 wb.save('test.xlsx')
     
